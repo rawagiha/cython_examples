@@ -6,7 +6,7 @@ namespace shapes {
 
     Rectangle::Rectangle () {}
 
-    Rectangle::Rectangle(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1) {
+    Rectangle::Rectangle(int x0, int y0, int x1, int y1) {
         this->x0 = x0;
         this->y0 = y0;
         this->x1 = x1;
@@ -15,11 +15,11 @@ namespace shapes {
 
     Rectangle::~Rectangle () {}
 
-    unsigned int Rectangle::getArea () {
+    int Rectangle::getArea () {
         return (this->x1 - this->x0) * (this->y1 - this->y0);
     }
     
-    void Rectangle::getSize (unsigned int *width, unsigned int *height) {
+    void Rectangle::getSize (int *width, int *height) {
         (*width) = x1 - x0;
         (*height) = y1 - y0;
     }

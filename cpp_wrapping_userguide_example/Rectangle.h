@@ -3,14 +3,13 @@
 
 namespace shapes {
     class Rectangle {
-        public:
-            unsigned int x0, y0, x1, y1;
+            int x0, y0, x1, y1;
+        public:    
             Rectangle();
-            Rectangle(unsigned int x01, unsigned int y0, unsigned int x1, unsigned int y1);
+            Rectangle(int x01, int y0, int x1, int y1);
             ~Rectangle();
-
-            unsigned int getArea();
-            void getSize(unsigned int* width, unsigned int* height);
+            int getArea();
+            void getSize(int* width, int* height);
             void move(int dx, int dy);
     };   
 } //end of name space 

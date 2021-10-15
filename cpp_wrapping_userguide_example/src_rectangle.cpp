@@ -2,13 +2,11 @@
 #include "iostream"
 
 int main() {
-    shapes::Rectangle r1(3, 4, 12, 7);
+    shapes::Rectangle r1(-3, -4, 2, 7);
 
-    unsigned int w ;
-    unsigned int h;
+    int w ;
+    int h;
 
     r1.getSize(&w, &h);
     std::cout << "width is: " << w << " and height is: " << h << std::endl;
-    
-
 }

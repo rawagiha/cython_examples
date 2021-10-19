@@ -5,7 +5,7 @@
 #include "ssw_cpp.h"
 
 
-void sw_aln(StripedSmithWaterman::Alignment& aln,
+void sw_aln(StripedSmithWaterman::Alignment* aln,
             const std::string& ref,
             const std::string& query,
             const uint8_t& match_score,
@@ -17,12 +17,12 @@ void sw_aln(StripedSmithWaterman::Alignment& aln,
 
 int main() {
     StripedSmithWaterman::Alignment aln;
-    sw_aln(aln, "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA", "CTGAGCCGGTAAATC", 3, 2, 2, 0);
+    sw_aln(&aln, "CAGCCTTTCTGACCCGGAAATCAAAATAGGCACAACAAA", "CTGAGCCGGTAAATC", 3, 2, 2, 0);
     
-    std::cout << aln.cigar_string << std::endl;
+    std::cout << aln.mismatches << std::endl;
 }
 
-void sw_aln(StripedSmithWaterman::Alignment& alignment,
+void sw_aln(StripedSmithWaterman::Alignment* alignment,
            const std::string& ref, 
            const std::string& query, 
            const uint8_t& match_score, 
@@ -40,5 +40,5 @@ void sw_aln(StripedSmithWaterman::Alignment& alignment,
 
     StripedSmithWaterman::Filter filter;
 
-    aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, &alignment, mask_len);
+    aligner.Align(query.c_str(), ref.c_str(), ref.size(), filter, alignment, mask_len);
 }

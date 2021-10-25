@@ -133,7 +133,8 @@ std::string concat_gaps(const std::vector<std::string>& cigarette, std::string  
     return gaps;
 }
 
-void edit_cigar(std::vector<std::string>& cigarette) {
+
+std::vector<std::string>  edit_cigar(std::vector<std::string>& cigarette) {
     std::vector<std::string> tmp;
     std::vector<std::string> ins;
     std::vector<std::string> del;
@@ -171,7 +172,7 @@ void edit_cigar(std::vector<std::string>& cigarette) {
             prev_is_gap = false; 
         }    
     }
-    cigarette = tmp;
+    return tmp;
 }
 
 

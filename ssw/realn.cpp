@@ -134,13 +134,10 @@ std::string concat_gaps(const std::vector<std::string>& cigarette, std::string  
 }
 
 
-std::vector<std::string>  edit_cigar(std::vector<std::string>& cigarette) {
-    std::vector<std::string> tmp;
-    std::vector<std::string> ins;
-    std::vector<std::string> del;
+void edit_cigar(std::vector<std::string>& cigarette) {
+    std::vector<std::string> tmp, ins, del;
+    
     bool prev_is_gap = false;
-    bool flushed = false;
-
     for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr){
         if ( is_gap((*itr)) ) {
             if ( (*itr).find("I") != std::string::npos ) {
@@ -172,7 +169,7 @@ std::vector<std::string>  edit_cigar(std::vector<std::string>& cigarette) {
             prev_is_gap = false; 
         }    
     }
-    return tmp;
+    std::swap(cigarette, tmp);
 }
 
 
@@ -181,8 +178,6 @@ std::vector<ParsedVariant> find_variants(const StripedSmithWaterman::Alignment& 
                                          const std::string& query,
                                          uint32_t genomic_pos) {
  
-   // bool is_complex = false;
-    
     std::vector<std::string> cigarette = decompose_cigar_string(alignment.cigar_string);
     std::vector<ParsedVariant> variants;
     
@@ -192,8 +187,7 @@ std::vector<ParsedVariant> find_variants(const StripedSmithWaterman::Alignment& 
     
     genomic_pos = (genomic_pos > 0) ? genomic_pos - 1 : 0;
 
-    uint32_t ref_idx = alignment.ref_begin;
-    uint32_t query_idx = alignment.query_begin;
+    uint32_t ref_idx = alignment.ref_begin, query_idx = alignment.query_begin;
     
     std::cout << alignment.cigar_string << std::endl;
      

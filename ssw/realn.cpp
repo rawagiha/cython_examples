@@ -43,7 +43,7 @@ std::vector<ParsedVariant> find_variants(const StripedSmithWaterman::Alignment& 
 
 std::vector<std::string> decompose_cigar_string(const std::string& cigar_string);
 
-
+double sequence_similarity(const char* a, const char* b); 
 
 int main() {
     StripedSmithWaterman::Alignment aln;
@@ -58,6 +58,9 @@ int main() {
     */
     sw_aln(&aln, ref, query, 3, 2, 3, 0);
     
+    std::string a = "WIKIMEDIA";
+    std::string b = "WIKIMANIA";
+    std::cout << sequence_similarity(a.c_str(), b.c_str()) << std::endl;
     std::vector<ParsedVariant> v = find_variants(aln, ref, query, 139399308);
 }
 
@@ -108,7 +111,7 @@ bool is_gap(std::string cigar_itr) {
 
 bool is_complex(const std::vector<std::string>& cigarette) {
     bool prev_is_gap = false;
-    for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr){
+    for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr) {
         if ( (prev_is_gap) && is_gap((*itr)) ) { 
             return true;
         }
@@ -123,7 +126,7 @@ std::string concat_gaps(const std::vector<std::string>& cigarette, std::string  
     if ( !cigarette.empty() ) {
         uint16_t total_gap_len = 0;
         
-        for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr){
+        for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr) {
             total_gap_len += std::stoi((*itr).substr(0, (*itr).length() - 1));
         }
     
@@ -138,7 +141,7 @@ void edit_cigar(std::vector<std::string>& cigarette) {
     std::vector<std::string> tmp, ins, del;
     
     bool prev_is_gap = false;
-    for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr){
+    for (std::vector<std::string>::const_iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr) {
         if ( is_gap((*itr)) ) {
             if ( (*itr).find("I") != std::string::npos ) {
                 ins.push_back(*itr);
@@ -191,7 +194,7 @@ std::vector<ParsedVariant> find_variants(const StripedSmithWaterman::Alignment& 
     
     std::cout << alignment.cigar_string << std::endl;
      
-    for (std::vector<std::string>::iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr){
+    for (std::vector<std::string>::iterator itr = cigarette.begin(); itr != cigarette.end(); ++itr) {
 
         char operation = (*itr).back(); // cigar operation 
         uint16_t op_len = std::stoi((*itr).substr(0, (*itr).length() - 1)); // operation length
@@ -285,6 +288,63 @@ std::vector<ParsedVariant> find_variants(const StripedSmithWaterman::Alignment& 
     
     return variants;   
 }
+
+/*
+ The Ratcliff-Obershelp algorithm copied from https://github.com/wernsey/miscsrc 
+*/  
+uint16_t seq_smlrty_recursive(const char* a, int alen, const char* b, int blen) {
+    uint16_t i, j, k, l, p = 0, q = 0, len =0, left = 0, right = 0;
+    
+    for (i = 0; i < alen - len; i++) {
+        for (j = 0; j < blen - len; j++) {
+            if (a[i] == b [j] && a[i + len] == b[j + len]) {
+                for (k = i + 1, l = j + 1; a[k] == b[l] && k < alen && l < blen; k++, l++);
+                
+                if (k - i > len) {
+                    p = i;
+                    q = j;
+                    len = k - i;
+                }  
+            }
+        }
+    }
+    
+    if (len == 0) {
+        return 0;
+    }
+    
+    if (p != 0  && q != 0) {
+        left = seq_smlrty_recursive(a, p, b, q);
+    }
+    
+    i = (p + len);
+    alen -= i;
+    j = (q + len);
+    blen -= j;
+    
+    if (alen != 0 && blen != 0) {
+        right = seq_smlrty_recursive(a + i, alen, b + j, blen);
+    }
+   
+    return len + left + right;
+} 
+
+
+double sequence_similarity(const char* a, const char* b) {
+     
+     uint32_t alen, blen;
+
+     alen = strlen(a);
+     blen = strlen(b);
+
+     if (alen == 0 || blen == 0) {
+         return 0;
+     }
+
+     return (seq_smlrty_recursive(a, alen, b, blen) * 2.0) / (alen + blen);
+}
+
+
 
 
 

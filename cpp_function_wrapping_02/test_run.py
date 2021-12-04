@@ -6,6 +6,9 @@ makes = [b"toyota", b"nissan", b"honda"]
 colors = [b"white", b"gray", b"silver"]
 mpgs = [11, 21, 34]
 
-mycars = py_make_cars(makes, colors, mpgs)
+def make_input():
+    return makes, colors, mpgs
+
+mycars = py_make_cars( * make_input())
 for mycar in mycars:
     print(mycar)

@@ -18,7 +18,7 @@ std::vector<Car> make_cars( const std::vector<std::string> & makes,
 {
 
     std::vector<Car> cars;
-    for ( int i = 0  ; i < makes.size(); ++i ) {
+    for ( size_t i = 0  ; i < makes.size(); ++i ) {
         cars.emplace_back( Car( makes[i], colors[i], mpgs[i] ) );
     }
 

@@ -4,6 +4,13 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 
+class BuildExt(build_ext):
+    def build_extensions(self):
+        if '-Wstrict-prototypes' in self.compiler.compiler_so:
+            self.compiler.compiler_so.remove('-Wstrict-prototypes')
+        super().build_extensions()
+
+
 extensions = [
     Extension(
         "test_module.calculator",
@@ -18,4 +25,4 @@ extensions = [
     )
 ]
 
-setup(cmdclass={"build_ext": build_ext}, ext_modules=cythonize(extensions))
+setup(cmdclass={"build_ext": BuildExt}, ext_modules=cythonize(extensions))
